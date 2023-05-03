@@ -6,49 +6,40 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.matushov.springcourse.Project2Boot.models.Person;
-import ru.matushov.springcourse.Project2Boot.services.BooksService;
 import ru.matushov.springcourse.Project2Boot.services.PeopleService;
-
+import ru.matushov.springcourse.Project2Boot.util.PersonValidator;
 
 import jakarta.validation.Valid;
 
 /**
- * @author Stepan Matushov
+ * @author Neil Alishev
  */
 @Controller
 @RequestMapping("/people")
 public class PeopleController {
 
     private final PeopleService peopleService;
-
-
+    private final PersonValidator personValidator;
 
     @Autowired
-    public PeopleController(PeopleService peopleService) {
+    public PeopleController(PeopleService peopleService, PersonValidator personValidator) {
         this.peopleService = peopleService;
-
+        this.personValidator = personValidator;
     }
 
     @GetMapping()
     public String index(Model model) {
-        model.addAttribute("people", peopleService.findALl());
+        model.addAttribute("people", peopleService.findAll());
         return "people/index";
     }
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model) {
         model.addAttribute("person", peopleService.findOne(id));
-        model.addAttribute("books", peopleService.getBookList(id));
+        model.addAttribute("books", peopleService.getBooksByPersonId(id));
+
         return "people/show";
     }
-
-    @GetMapping("/{id}/booklist")
-    public String bookList(@PathVariable("id") int id, Model model) {
-        model.addAttribute("books", peopleService.getBookList(id));
-        return "people/show";
-    }
-
-
 
     @GetMapping("/new")
     public String newPerson(@ModelAttribute("person") Person person) {
@@ -58,6 +49,8 @@ public class PeopleController {
     @PostMapping()
     public String create(@ModelAttribute("person") @Valid Person person,
                          BindingResult bindingResult) {
+        personValidator.validate(person, bindingResult);
+
         if (bindingResult.hasErrors())
             return "people/new";
 

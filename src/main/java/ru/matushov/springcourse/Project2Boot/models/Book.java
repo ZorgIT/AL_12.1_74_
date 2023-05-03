@@ -6,50 +6,82 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import java.util.Date;
 
+/**
+ * @author Neil Alishev
+ */
 @Entity
 @Table(name = "Book")
 public class Book {
-    //Генерируется автоматически, проверка не требуется
-
     @Id
-    @Column(name ="book_id")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int book_id;
+    private int id;
+
+    @NotEmpty(message = "Название книги не должно быть пустым")
+    @Size(min = 2, max = 100, message = "Название книги должно быть от 2 до 100 символов длиной")
+    @Column(name = "title")
+    private String title;
+
+    @NotEmpty(message = "Автор не должен быть пустым")
+    @Size(min = 2, max = 100, message = "Имя автора должно быть от 2 до 100 символов длиной")
+    @Column(name = "author")
+    private String author;
+
+    @Min(value = 1500, message = "Год должен быть больше, чем 1500")
+    @Column(name = "year")
+    private int year;
 
     @ManyToOne
-    @JoinColumn(name="user_id",referencedColumnName = "user_id")
+    @JoinColumn(name = "person_id", referencedColumnName = "id")
     private Person owner;
-
-    @Transient
-    private boolean expired;
-
-    @Column(name = "book_name")
-    @NotEmpty(message="Название книги не должно быть пустым")
-    @Size(min = 2,max = 100, message = "Название книги должно быть от 2 до 100 символов длиной")
-    private String bookName;
-
-    @Column(name="book_author")
-    @NotEmpty(message="Автор не должен быть пустым")
-    @Size(min = 2,max = 100, message = "Имя автора должно быть от 2 до 100 символов длиной")
-    private String bookAuthor;
-    @Column(name="book_written")
-    @Min(value = 1500, message = "Год должен быть больше, чем 1500")
-    private int bookWritten;
 
     @Column(name = "taken_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date takenAt;
 
+    @Transient
+    private boolean expired; // Hibernate не будет замечать этого поля, что нам и нужно. По-умолчанию false.
 
-    //Конструктор по умолчанию, нужен для корректного функционирования Spring
-    public Book(){
+    public Book() {
 
     }
 
-    public Book(String bookName, String author, int written) {
-        this.bookName = bookName;
-        this.bookAuthor =author;
-        this.bookWritten =written;
+    public Book(String title, String author, int year) {
+        this.title = title;
+        this.author = author;
+        this.year = year;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
     }
 
     public Person getOwner() {
@@ -60,49 +92,6 @@ public class Book {
         this.owner = owner;
     }
 
-    public int getBook_id() {
-        return book_id;
-    }
-
-    public void setBook_id(int book_id) {
-        this.book_id = book_id;
-    }
-
-    public String getBookName() {
-        return bookName;
-    }
-
-    public void setBookName(String book_name) {
-        this.bookName = book_name;
-    }
-
-    public String getBookAuthor() {
-        return bookAuthor;
-    }
-
-    public void setBookAuthor(String book_author) {
-        this.bookAuthor = book_author;
-    }
-
-    public int getBookWritten() {
-        return bookWritten;
-    }
-
-    public void setBookWritten(int book_written) {
-        this.bookWritten = book_written;
-    }
-
-    public boolean isExpired() {
-        if (this.takenAt != null) {
-            if (this.takenAt.before(new Date())) setExpired(true);
-        }
-        return expired;
-    }
-
-    public void setExpired(boolean expired) {
-        this.expired = expired;
-    }
-
     public Date getTakenAt() {
         return takenAt;
     }
@@ -111,14 +100,11 @@ public class Book {
         this.takenAt = takenAt;
     }
 
-    @Override
-    public String toString() {
-        return "Book{" +
-                "book_id=" + book_id +
-                ", owner=" + owner +
-                ", book_name='" + bookName + '\'' +
-                ", book_author='" + bookAuthor + '\'' +
-                ", book_written=" + bookWritten +
-                '}';
+    public boolean isExpired() {
+        return expired;
+    }
+
+    public void setExpired(boolean expired) {
+        this.expired = expired;
     }
 }
