@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update person</title>
+</head>
+<body>
+
+<form th:method="PATCH" th:action="@{/books/{id}(id=${book.getBook_id()})}" th:object="${book}">
+    <label for="name">Enter name: </label>
+    <input type="text" th:field="*{bookName}" id="name"/>
+    <div style="color:red" th:if="${#fields.hasErrors('bookName')}"
+         th:errors="*{bookName}">Некорректное наименование книги</div>
+    <br/>
+
+    <label for="author">Enter author name: </label>
+    <input type="text" th:field="*{bookAuthor}" id="author"/>
+    <div style="color:red" th:if="${#fields.hasErrors('bookAuthor')}"
+         th:errors="*{bookAuthor}">Некорректное имя автора</div>
+    <br/>
+
+    <label for="written">Enter date of book written: </label>
+    <input type="text" th:field="*{bookWritten}" id="written"/>
+    <div style="color:red" th:if="${#fields.hasErrors('bookWritten')}"
+         th:errors="*{bookWritten}">Некорректный год написания книги</div>
+    <br/>
+    <input type="submit" value="Обновить"/>
+</form>
+
+<br/>
+<hr/>
+<a href="/books">Отменить изменения и вернуться</a>
+<br/>
+<hr/>
+<form th:method="DELETE" th:action="@{/books/{id}(id=${book.getBook_id()})}" th:object="${book}">
+    <input type="submit" value="Delete"
+           onclick="javascript: return confirm('Вы уверены что хотите удалить эту книгу?');"/>
+</form>
+
+</body>
+</html>

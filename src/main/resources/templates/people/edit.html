@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update person</title>
+</head>
+<body>
+
+<form th:method="PATCH" th:action="@{/people/{id}(id=${person.getUser_id()})}" th:object="${person}">
+    <label for="name">Введите имя: </label>
+    <input type="text" th:field="*{user_name}" id="name"/>
+    <div style="color:red" th:if="${#fields.hasErrors('user_name')}" th:errors="*{user_name}">Некорректное имя</div>
+    <br/>
+
+    <label for="birthday">Введите год рождения </label>
+    <input type="text" th:field="*{user_birthday}" id="birthday"/>
+    <div style="color:red" th:if="${#fields.hasErrors('user_birthday')}" th:errors="*{user_birthday}">Некорректный год рождения</div>
+    <br/>
+    <input type="submit" value="Обновить!"/>
+</form>
+
+<form th:method="DELETE" th:action="@{/people/{id}(id=${person.getUser_id()})}" th:object="${person}">
+    <input type="submit" value="Удалить"
+           onclick="javascript: return confirm('Are you sure you want to delete this person?');"/>
+</form>
+
+<br/>
+<hr/>
+<a href="/people">Отменить изменения и вернуться</a>
+
+</body>
+</html>
